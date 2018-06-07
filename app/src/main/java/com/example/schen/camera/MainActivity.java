@@ -81,7 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
+        generateData();
         return image;
+
     }
 
     static final int REQUEST_TAKE_PHOTO = 1;
@@ -107,19 +109,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void listViewIntent(){
-        File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        int numOfFiles = storageDir1.listFiles().length;
-        File[] LoF = storageDir1.listFiles();
-        String name = LoF[0].getAbsolutePath();
-        //Bitmap bMap = BitmapFactory.decodeFile(String.valueOf(LoF));1
-        ListView lv = findViewById(R.id.listView1);
-        List<Bitmap> demoarray = new ArrayList<>();
-        //for (int i = 0; i< numOfFiles; i++)
 
-    }
 
-    private void generateData() {
+    public void generateData() {
         //Create MyData objects.
         File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         int numOfFiles = storageDir1.listFiles().length;
