@@ -79,7 +79,7 @@ public class EasyAdapter extends BaseAdapter {
         //Update the widgets.
         viewHolder.imageTitle.setText(targetData.getImageTitle());
         viewHolder.imageDes.setText(targetData.getImageDescription());
-        Picasso.get().load(targetData.getImageUrl()).into(viewHolder.image);
+        Picasso.get().load(new File(targetData.getImageUrl())).into(viewHolder.image);
         return convertView;
 
 
