@@ -26,6 +26,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.example.schen.camera.Adapter.EasyAdapter;
 import com.example.schen.camera.Adapter.MyData;
 import java.io.File;
@@ -43,24 +45,17 @@ public class MainActivity extends AppCompatActivity {
     List<MyData> mDataList = new ArrayList<>();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button button2 = findViewById(R.id.button2);
-        Button button = findViewById(R.id.button);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateDataSet();
-            }
-        });
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
-
             }
         });
 
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        generateData();
+        updateDataSet();
         return image;
 
     }
@@ -108,42 +103,45 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        Intent passpictureintent = new Intent(MainActivity.this,testactivity.class);
+        startActivity(passpictureintent);
 
+    }
 
     public void generateData() {
-        //Create MyData objects.
         File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         int numOfFiles = storageDir1.listFiles().length;
         File[] LoF = storageDir1.listFiles();
-
+        //Create MyData objects.
         for (int i = 0;i<numOfFiles;i++){
             String name = LoF[i].getAbsolutePath();
-            mDataList.add(new MyData("chicken",name,null));
-
+            mDataList.add(new MyData("",name,""));
         }
-
-//        MyData apple = new MyData("Apple","storage/emulated/0/Android/data/com.example.schen.camera/files/Pictures/PNG_20180606_2920396161264260915.png" ,"I Love Apple");
-//        MyData microsoft = new MyData("Microsoft", "https://pbs.twimg.com/profile_images/875416480547917824/R6wl9gWl_400x400.jpg", "Microsoft soft");
-//        MyData google = new MyData("Google", "https://yt3.ggpht.com/a-/ACSszfH4rgI-WIVE6ZZqYZK-8oCZyEY_L8-FhvJarA=s900-mo-c-c0xffffffff-rj-k-no", "Google evil");
-//
-//        mDataList.add(apple);
-//        mDataList.add(microsoft);
-//        mDataList.add(google);
 
         mAdapter = new EasyAdapter(this, mDataList);
         //Set the adapter with MyData list to the listView;
         mListView.setAdapter(mAdapter);
-       // File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
     }
 
     private void updateDataSet() {
-        //Create a new MyData object and add to the listView
-        MyData amazon = new MyData("Amazon", "https://pmcvariety.files.wordpress.com/2018/01/amazon-logo.jpg?w=1000&h=562&crop=1", "Amazon hehe");
-        mDataList.add(amazon);
-        //Update listView with new data list.
-        mAdapter.updateData(mDataList);
+        //Create MyData objects.
+        File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        int numOfFiles = storageDir1.listFiles().length;
+        File[] LoF = storageDir1.listFiles();
+        String titlemessage = getIntent().getStringExtra("messagekey1");
+        String descpmessage = getIntent().getStringExtra("messagekey2");
+        Toast.makeText(getApplicationContext(),titlemessage,Toast.LENGTH_SHORT).show();
+        for (int i = numOfFiles - 1;i < numOfFiles;i++){
+            String name = LoF[i].getAbsolutePath();
+            mDataList.add(new MyData(titlemessage,name,descpmessage));
+        }
 
-
+        mAdapter = new EasyAdapter(this, mDataList);
+        //Set the adapter with MyData list to the listView;
+        mListView.setAdapter(mAdapter);
     }
 }

@@ -1,15 +1,13 @@
 package com.example.schen.camera.Adapter;
 
 import android.content.Context;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageSwitcher;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.provider.MediaStore;
+
 import com.example.schen.camera.R;
 import com.squareup.picasso.Picasso;
 
@@ -82,8 +80,6 @@ public class EasyAdapter extends BaseAdapter {
         Picasso.get().load(new File(targetData.getImageUrl())).into(viewHolder.image);
         return convertView;
 
-
-
     }
 
     /**
@@ -114,7 +110,7 @@ public class EasyAdapter extends BaseAdapter {
         public ViewHolder(View view) {
             imageTitle = view.findViewById(R.id.item_title);
             imageDes = view.findViewById(R.id.item_description);
-            image = view.findViewById(R.id.item_image);
+            image = view.findViewById(R.id.annotateimage);
         }
     }
 
