@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
 
         mListView = findViewById(R.id.listView1);
 
-        generateData();
+        try {
+            generateData();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     String mCurrentPhotoPath;
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        updateDataSet();
+//        updateDataSet();
         return image;
 
     }
@@ -112,15 +117,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void generateData() {
+    public void generateData() throws IOException {
         File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        int numOfFiles = storageDir1.listFiles().length;
+        int numOfFiles = storageDir1.listFiles().length - 1;
         File[] LoF = storageDir1.listFiles();
-        //Create MyData objects.
-        for (int i = 0;i<numOfFiles;i++){
-            String name = LoF[i].getAbsolutePath();
-            mDataList.add(new MyData("",name,""));
-        }
+        testactivity.ReadFile rf = new testactivity.ReadFile();
+        String filename ="/storage/emulated/0/Android/data/com.example.schen.camera/files/Pictures/titledescp.txt";
+        String listtitlename[]=rf.readLines(filename);
+
+
+            for (int i = 0;i<numOfFiles;i++){
+                String name = LoF[i].getAbsolutePath();
+                String titlename = listtitlename[i];
+                mDataList.add(new MyData("",name,titlename));
+            }
 
         mAdapter = new EasyAdapter(this, mDataList);
         //Set the adapter with MyData list to the listView;
@@ -132,12 +142,31 @@ public class MainActivity extends AppCompatActivity {
         File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         int numOfFiles = storageDir1.listFiles().length;
         File[] LoF = storageDir1.listFiles();
-        String titlemessage = getIntent().getStringExtra("messagekey1");
-        String descpmessage = getIntent().getStringExtra("messagekey2");
-        Toast.makeText(getApplicationContext(),titlemessage,Toast.LENGTH_SHORT).show();
+
+//        String titlemessage = getIntent().getStringExtra("messagekey1");
+//        String descpmessage = getIntent().getStringExtra("messagekey2");
+
         for (int i = numOfFiles - 1;i < numOfFiles;i++){
             String name = LoF[i].getAbsolutePath();
-            mDataList.add(new MyData(titlemessage,name,descpmessage));
+
+            testactivity.ReadFile rf = new testactivity.ReadFile();
+            String filename ="/storage/emulated/0/Android/data/com.example.schen.camera/files/Pictures/titledescp.txt";
+
+            /*try
+            {
+                List<String> lines = Arrays.asList(rf.readLines(filename));
+                String titleofimage= lines.get(i);
+                mDataList.add(new MyData("",name,""));
+            }
+            catch(IOException e)
+            {
+                // Print out the exception that occurred
+                System.out.println("Unable to create "+filename+": "+e.getMessage());
+            }*/
+
+
+
+            mDataList.add(new MyData("",name,""));
         }
 
         mAdapter = new EasyAdapter(this, mDataList);
