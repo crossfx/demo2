@@ -75,7 +75,7 @@ public class EasyAdapter extends BaseAdapter {
         MyData targetData = mDataList.get(position);
 
         //Update the widgets.
-        viewHolder.imageTitle.setText(targetData.getImageTitle());
+        /*viewHolder.imageTitle.setText(targetData.getImageTitle());*/
         viewHolder.imageDes.setText(targetData.getImageDescription());
         Picasso.get().load(new File(targetData.getImageUrl())).into(viewHolder.image);
         return convertView;
@@ -108,7 +108,7 @@ public class EasyAdapter extends BaseAdapter {
          * @param view
          */
         public ViewHolder(View view) {
-            imageTitle = view.findViewById(R.id.item_title);
+            /*imageTitle = view.findViewById(R.id.item_title);*/
             imageDes = view.findViewById(R.id.item_description);
             image = view.findViewById(R.id.annotateimage);
         }

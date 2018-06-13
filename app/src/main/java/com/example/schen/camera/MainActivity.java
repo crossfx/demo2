@@ -1,64 +1,76 @@
 package com.example.schen.camera;
 
-import android.arch.lifecycle.ViewModel;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.hardware.camera2.CameraCaptureSession;
-import android.media.Image;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Base64;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.schen.camera.Adapter.EasyAdapter;
 import com.example.schen.camera.Adapter.MyData;
+import com.google.android.gms.common.internal.Constants;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
     ListView mListView;
     EasyAdapter mAdapter;
     List<MyData> mDataList = new ArrayList<>();
-
-
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button button2 = findViewById(R.id.button2);
+        Button opencamBTN = findViewById(R.id.opencambtn);
+        Button signoutBTN = findViewById(R.id.signoutbtn);
 
-        button2.setOnClickListener(new View.OnClickListener() {
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        opencamBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
+
             }
         });
+
+        signoutBTN.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //logging out the user
+                firebaseAuth.signOut();
+                //closing activity
+                finish();
+
+                startActivity(new Intent(getApplicationContext(), login.class));
+            }
+        });
+
 
         mListView = findViewById(R.id.listView1);
 
@@ -67,11 +79,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     String mCurrentPhotoPath;
 
-    private File createImageFile() throws IOException {
+    public File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd").format(new Date());
         String imageFileName = "PNG_" + timeStamp + "_";
@@ -119,17 +132,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void generateData() throws IOException {
         File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        int numOfFiles = storageDir1.listFiles().length - 1;
+        int numOfFiles = storageDir1.listFiles().length;
         File[] LoF = storageDir1.listFiles();
         testactivity.ReadFile rf = new testactivity.ReadFile();
-        String filename ="/storage/emulated/0/Android/data/com.example.schen.camera/files/Pictures/titledescp.txt";
+        String filename ="/storage/emulated/0/Android/data/com.example.schen.camera/files/Documents/titledescp.txt";
         String listtitlename[]=rf.readLines(filename);
 
 
             for (int i = 0;i<numOfFiles;i++){
-                String name = LoF[i].getAbsolutePath();
+                String imagefilpath = LoF[i].getAbsolutePath();
                 String titlename = listtitlename[i];
-                mDataList.add(new MyData("",name,titlename));
+                mDataList.add(new MyData(imagefilpath,titlename));
             }
 
         mAdapter = new EasyAdapter(this, mDataList);
@@ -137,40 +150,10 @@ public class MainActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
     }
 
-    private void updateDataSet() {
-        //Create MyData objects.
-        File storageDir1 = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        int numOfFiles = storageDir1.listFiles().length;
-        File[] LoF = storageDir1.listFiles();
-
-//        String titlemessage = getIntent().getStringExtra("messagekey1");
-//        String descpmessage = getIntent().getStringExtra("messagekey2");
-
-        for (int i = numOfFiles - 1;i < numOfFiles;i++){
-            String name = LoF[i].getAbsolutePath();
-
-            testactivity.ReadFile rf = new testactivity.ReadFile();
-            String filename ="/storage/emulated/0/Android/data/com.example.schen.camera/files/Pictures/titledescp.txt";
-
-            /*try
-            {
-                List<String> lines = Arrays.asList(rf.readLines(filename));
-                String titleofimage= lines.get(i);
-                mDataList.add(new MyData("",name,""));
-            }
-            catch(IOException e)
-            {
-                // Print out the exception that occurred
-                System.out.println("Unable to create "+filename+": "+e.getMessage());
-            }*/
-
-
-
-            mDataList.add(new MyData("",name,""));
-        }
-
-        mAdapter = new EasyAdapter(this, mDataList);
-        //Set the adapter with MyData list to the listView;
-        mListView.setAdapter(mAdapter);
+    public void encodeBitmapAndSaveToFirebase(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        String imageEncoded = Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
     }
 }

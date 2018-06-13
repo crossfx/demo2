@@ -20,16 +20,16 @@ public class MyData {
     //File blah = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
 
-    public MyData(String imageTitle, String imageUrl, String imageDescription) {
-        this.mImageTitle = imageTitle;
+    public MyData(String imageUrl, String imageDescription) {
+
         this.mImageUrl = imageUrl;
         this.mImageDescription = imageDescription;
     }
 
 
-    public String getImageTitle() {
+   /* public String getImageTitle() {
         return mImageTitle;
-    }
+    }*/
 
     public String getImageUrl() {
         return mImageUrl;
@@ -39,9 +39,9 @@ public class MyData {
         return mImageDescription;
     }
 
-    public void setImageTitle(String mImageTitle) {
+/*    public void setImageTitle(String mImageTitle) {
         this.mImageTitle = mImageTitle;
-    }
+    }*/
 
     public void setImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
